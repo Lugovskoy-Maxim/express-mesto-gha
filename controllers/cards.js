@@ -14,7 +14,7 @@ module.exports.createCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: err._message });
+        res.status(400).send({ message: err.message });
         return;
       }
       res

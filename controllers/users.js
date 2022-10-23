@@ -20,21 +20,21 @@ module.exports.createUser = (req, res, next) => {
       }
       res
         .status(500)
-        .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
+        .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
     next(err)})
   .catch(next);
 };
 
 module.exports.findUserbyId = (req, res) => {
   User.findById(req.params.id)
-    .orFail(new NotFoundError("Пользователь по указанному id не найден"))
+    .orFail(res.status(404).send({ message: err._message}))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {
-        throw new BadRequestError("Передан некорректный id");
+        return res.status(400).send({ message: err._message})
       }
       if (err.name === "ValidationError") {
-        throw new BadRequestError("Неверено задано одно из полей");
+        return res.status(400).send({ message: err._message})
       }
       res
         .status(500)
@@ -49,14 +49,14 @@ module.exports.updateUser = (req, res) => {
     { name, about },
     { new: true, runValidators: true }
   )
-    .orFail(new NotFoundError("Пользователь по указанному id не найден"))
+    .orFail(res.status(404).send({ message: err._message}))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {
-        throw new BadRequestError("Передан некорректный id");
+        return res.status(400).send({ message: err._message})
       }
       if (err.name === "ValidationError") {
-        throw new BadRequestError("Неверено задано одно из полей");
+        return res.status(400).send({ message: err._message})
       }
       res
         .status(500)
@@ -71,14 +71,14 @@ module.exports.updateAvatar = (req, res) => {
     { avatar },
     { new: true, runValidators: true }
   )
-    .orFail(new NotFoundError("Пользователь по указанному id не найден"))
+    .orFail(res.status(404).send({ message: err._message}))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {
-        throw new BadRequestError("Передан некорректный id");
+        return res.status(400).send({ message: err._message})
       }
       if (err.name === "ValidationError") {
-        throw new BadRequestError("Неверная ссылка на изображение");
+        return res.status(400).send({ message: err._message})
       }
       res
         .status(500)

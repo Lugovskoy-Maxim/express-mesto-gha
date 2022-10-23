@@ -20,7 +20,7 @@ app.use((req, res, next) => {
 app.use(cardRouter);
 app.use(routesUser);
 app.use('/*', (req, res) => {
-  return res.status(400).send("Произошла ошибка, пожалуйста проверте адрес запроса")
+  return res.status(404).send({ message: `Произошла ошибка, пожалуйста проверте адрес запроса`})
 });
 
 app.listen(PORT, () => {

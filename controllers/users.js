@@ -26,8 +26,12 @@ module.exports.createUser = (req, res, next) => {
 };
 
 module.exports.findUserbyId = (req, res, next) => { //нужно найти err
-  User.findById(req.params.id)
-    .orFail(res.status(404).send({ message: `Пользоваталя с указанным id не существует`}))
+  User.findById(req.params.id, {runValidators: true}, {new: true})
+  .orFail(() => {
+    const error = new Error('Пользователь по заданному id отсутствует в базе');
+    error.name = 'NotFoundError';
+    throw error;
+  })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {

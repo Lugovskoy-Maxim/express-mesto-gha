@@ -25,10 +25,10 @@ module.exports.createUser = (req, res, next) => {
   .catch(next);
 };
 
-module.exports.findUserbyId = (req, res) => {
+module.exports.findUserbyId = (req, res, next) => { //нужно найти err
   User.findById(req.params.id)
-    .orFail(res.status(404).send({ message: err._message}))
-    .then((user) => res.send({ data: user }))
+    // .orFail(res.status(404).send({ message: `Пользоваталя с указанным id не существует`}))
+    .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {
         return res.status(400).send({ message: err._message})
@@ -36,10 +36,9 @@ module.exports.findUserbyId = (req, res) => {
       if (err.name === "ValidationError") {
         return res.status(400).send({ message: err._message})
       }
-      res
-        .status(500)
-        .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
-    });
+      res.status(500).send({ message: `Произошла ошибка ${err.name}: ${err._message} ` });
+    next(err)})
+  .catch(next);
 };
 
 module.exports.updateUser = (req, res) => {
@@ -49,7 +48,7 @@ module.exports.updateUser = (req, res) => {
     { name, about },
     { new: true, runValidators: true }
   )
-    .orFail(res.status(404).send({ message: err._message}))
+    // .orFail(res.status(404).send({ message: err._message}))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {
@@ -71,7 +70,7 @@ module.exports.updateAvatar = (req, res) => {
     { avatar },
     { new: true, runValidators: true }
   )
-    .orFail(res.status(404).send({ message: err._message}))
+    // .orFail(res.status(404).send({ message: err._message}))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {

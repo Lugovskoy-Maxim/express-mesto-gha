@@ -55,15 +55,17 @@ module.exports.likeCard = (req, res) =>
     .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err.name === "CastError") {
-        res.status(400).send("Переданы некорректные данные");
+        res.status(400).send({ message: `Переданы некорректные данные`});
         return;
       }
-      {
-        res
-          .status(500)
-          .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
+      if (err.name === "NOT_FOUND") {
+        res.status(404).send({ message: `Карточка не найдена`});
+        return;
       }
-    });
+      res
+        .status(500)
+        .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
+    })
 
 module.exports.dislikeCard = (req, res) =>
   Card.findByIdAndUpdate(

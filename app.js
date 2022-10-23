@@ -20,10 +20,6 @@ app.use((req, res, next) => {
 app.use(cardRouter);
 app.use(routesUser);
 
-
-
-
-
 app.listen(PORT, () => {
   console.log(`Приложение запущено на порту ${PORT}`);
 });

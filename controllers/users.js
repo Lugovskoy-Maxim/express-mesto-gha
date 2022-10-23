@@ -27,7 +27,7 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.findUserbyId = (req, res, next) => { //нужно найти err
   User.findById(req.params.id)
-    // .orFail(res.status(404).send({ message: `Пользоваталя с указанным id не существует`}))
+    .orFail(res.status(404).send({ message: `Пользоваталя с указанным id не существует`}))
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {

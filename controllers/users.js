@@ -15,7 +15,8 @@ module.exports.createUser = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: err._message });
+        res.status(400).send({ message: err._message });
+        return;
       }
       res
         .status(500)
@@ -33,7 +34,8 @@ module.exports.findUserbyId = (req, res, next) => {
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Ошибка. Проверте правильность id' });
+        res.status(400).send({ message: 'Ошибка. Проверте правильность id' });
+        return;
       }
       res.status(500).send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
       next(err);
@@ -52,10 +54,12 @@ module.exports.updateUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: err._message });
+        res.status(400).send({ message: err._message });
+        return;
       }
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: err._message });
+        res.status(400).send({ message: err._message });
+        return;
       }
       res
         .status(500)
@@ -70,14 +74,15 @@ module.exports.updateAvatar = (req, res) => {
     { avatar },
     { new: true, runValidators: true },
   )
-    // .orFail(res.status(404).send({ message: err._message}))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: err._message });
+        res.status(400).send({ message: err._message });
+        return;
       }
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: err._message });
+        res.status(400).send({ message: err._message });
+        return;
       }
       res
         .status(500)

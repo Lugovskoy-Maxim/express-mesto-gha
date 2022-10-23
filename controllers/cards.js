@@ -14,7 +14,8 @@ module.exports.createCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: err._message });
+        res.status(400).send({ message: err._message });
+        return;
       }
       res
         .status(500)
@@ -28,7 +29,7 @@ module.exports.removeCard = (req, res) => {
       res.status(404).send({ message: 'карточка не найдена' });
     })
     .then((card) => {
-      const newLocal = card.owner.toString() == req.user._id;
+      const newLocal = card.owner.toString() === req.user._id;
       if (newLocal) {
         card.remove()
           .then(() => res.status(200).send({ message: 'Карточка удалена' }));
@@ -41,9 +42,7 @@ module.exports.removeCard = (req, res) => {
         res.status(400).send({ message: 'Переданы некорректные данные' });
         return;
       }
-      {
-        res.status(500).send({ message: `Произошла ошибка ${err.name}: ${err.message}`});
-      }
+      res.status(500).send({ message: `Произошла ошибка ${err.name}: ${err.message}` });
     });
 };
 

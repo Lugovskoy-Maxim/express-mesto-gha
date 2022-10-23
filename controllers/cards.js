@@ -52,6 +52,7 @@ module.exports.likeCard = (req, res) =>
     { new: true }
   )
     .orFail(res.status(404).send({ massage: `Карточка не найдена`}))
+    .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === "CastError") {
         res.status(400).send("Переданы некорректные данные");
@@ -71,6 +72,7 @@ module.exports.dislikeCard = (req, res) =>
     { new: true }
   )
     .orFail(res.status(404).send({ massage: `Карточка не найдена`}))
+    .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === "CastError") {
         res.status(400).send({ massage: `Переданы некорректные данные`});
@@ -79,4 +81,5 @@ module.exports.dislikeCard = (req, res) =>
       res
         .status(500)
         .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
-    });
+    })
+  ;

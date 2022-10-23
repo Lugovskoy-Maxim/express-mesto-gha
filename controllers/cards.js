@@ -37,7 +37,7 @@ module.exports.removeCard = (req, res) => {
           .then(() => res.status(200).send({ message: 'Карточка удалена' }));
         return;
       }
-      res.status(500).send({ message: 'Невозможно удалить чужую карточку' });
+      res.status(403).send({ message: 'Невозможно удалить чужую карточку' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -45,6 +45,7 @@ module.exports.removeCard = (req, res) => {
         return;
       } if (err.statusCode === 404) {
         res.status(404).send({ message: 'карточка не найдена' });
+        return;
       }
       res.status(500).send({ message: `Произошла ошибка ${err.name}: ${err.message}` });
     });
@@ -67,6 +68,7 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
       return;
     } if (err.statusCode === 404) {
       res.status(404).send({ message: 'карточка не найдена' });
+      return;
     }
     res
       .status(500)
@@ -90,6 +92,7 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
       return;
     } if (err.statusCode === 404) {
       res.status(404).send({ message: 'карточка не найдена' });
+      return;
     }
     res
       .status(500)

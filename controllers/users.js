@@ -38,6 +38,7 @@ module.exports.findUserbyId = (req, res) => {
         return;
       } if (err.statusCode === 404) {
         res.status(404).send({ message: 'Пользователь с таким id не найден' });
+        return;
       }
       res.status(500).send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
     });
@@ -52,11 +53,7 @@ module.exports.updateUser = (req, res) => {
   )
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(400).send({ message: err.message });
-        return;
-      }
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
         res.status(400).send({ message: err.message });
         return;
       }

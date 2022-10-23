@@ -81,6 +81,10 @@ module.exports.dislikeCard = (req, res) =>
         res.status(400).send({ message: `Переданы некорректные данные`});
         return;
       }
+      if (err.name === "NOT_FOUND") {
+        res.status(404).send({ message: `Карточка не найдена`});
+        return;
+      }
       res
         .status(500)
         .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });

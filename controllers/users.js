@@ -16,7 +16,7 @@ module.exports.createUser = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        throw new BadRequestError("Неверено задано одно из полей")
+        return res.status(400).send({ message: err._message})
       }
       res
         .status(500)

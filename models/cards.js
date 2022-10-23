@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+
 const { Schema } = mongoose;
 
 const userSchema = new Schema(
@@ -32,7 +33,7 @@ const userSchema = new Schema(
   },
   {
     versionKey: false,
-  }
+  },
 );
 
-module.exports = mongoose.model("card", userSchema);
+module.exports = mongoose.model('card', userSchema);

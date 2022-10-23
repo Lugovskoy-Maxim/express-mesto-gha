@@ -16,7 +16,7 @@ module.exports.createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res.status(400).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
+        throw new BadRequestError("Неверено задано одно из полей");
       }
       res.status(500).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
     });

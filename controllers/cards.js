@@ -29,6 +29,9 @@ module.exports.removeCard = (req, res, next) => {
       if (card.owner.toString() == req.user._id) {
         card
           .remove()
+          .orFail(() => {
+            res.status(404).send({ message: `карточка не найдена` });
+          })
           .then(() => res.status(200).send({ message: "Карточка удалена" }));
         return;
       }
@@ -83,6 +86,6 @@ module.exports.dislikeCard = (req, res) =>
         return;
       }
       res
-        .status(404)
+        .status(500)
         .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
     });

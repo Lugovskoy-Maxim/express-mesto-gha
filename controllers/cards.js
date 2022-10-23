@@ -1,4 +1,6 @@
 const Card = require("../models/cards");
+const NotFaundError = require("../Errors/NotFaundError");
+const BadRequestError = require("../Errors/BadRequestError");
 
 module.exports.getCards = (req, res) => {
   Card.find({})
@@ -14,13 +16,12 @@ module.exports.createCard = (req, res) => {
       res.status(200).send(card);
     })
     .catch((err) => {
-      if (err.name === "CastError") {
-        throw new BadRequestError("Передан некорректный id");
-      }
       if (err.name === "ValidationError") {
         throw new BadRequestError("Неверено задано одно из полей");
       }
-      res.status(500).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
+      res
+        .status(500)
+        .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
     });
 };
 
@@ -28,51 +29,50 @@ module.exports.removeCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (card.owner.toString() == req.user._id) {
-        card.remove()
-        .then(() => res.send({ message: 'Карточка удалена' }));
-        return
+        card.remove().then(() => res.send({ message: "Карточка удалена" }));
+        return;
       }
-      res.send('Недостаточно прав для удаления');
+      res.send("Недостаточно прав для удаления");
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        throw new BadRequestError("Передан некорректный id");
+        throw new BadRequestError("Переданы некорректные данные");
       }
-      if (err.name === "ValidationError") {
-        throw new BadRequestError("Неверено задано одно из полей");
+      {
+        res
+          .status(500)
+          .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
       }
-      res.status(500).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
     });
-}
+};
 
 module.exports.likeCard = (req, res) =>
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true }
-  )    .catch((err) => {
-    if (err.name === "CastError") {
-      throw new BadRequestError("Передан некорректный id");
-    }
-    if (err.name === "ValidationError") {
-      throw new BadRequestError("Неверено задано одно из полей");
-    }
-    res.status(500).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
-  });
+  )
+    .orFail(new NotFoundError("Карточка не найдена"))
+    .catch((err) => {
+      if (err.name === "CastError") {
+        throw new BadRequestError("Переданы некорректные данные");
+      }
+      {
+        res
+          .status(500)
+          .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
+      }
+    });
 
 module.exports.dislikeCard = (req, res) =>
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true }
-
   )
-  .catch((err) => {
-    if (err.name === "CastError") {
-      throw new BadRequestError("Передан некорректный id");
-    }
-    if (err.name === "ValidationError") {
-      throw new BadRequestError("Неверено задано одно из полей");
-    }
-    res.status(500).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
-  });
+    .orFail(new NotFoundError("Карточка не найдена"))
+    .catch((err) => {
+      res
+        .status(500)
+        .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
+    });

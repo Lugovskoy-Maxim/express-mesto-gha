@@ -12,19 +12,17 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
+  User.create(req.body)
     .then((user) => {
       res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        throw new BadRequestError("Неверено задано одно из полей");
+        throw new BadRequestError("Неверено задано одно из полей")
       }
       res
         .status(500)
         .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
-
     next(err)})
   .catch(next);
 };

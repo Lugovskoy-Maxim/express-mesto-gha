@@ -20,7 +20,6 @@ module.exports.createUser = (req, res) => {
       if (err.name === "ValidationError") {
         res
           .status(400)
-          .send({ massage:`${err.name}: ${err.message} ` });
         return;
       }
       res

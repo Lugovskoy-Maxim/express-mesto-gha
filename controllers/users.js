@@ -1,12 +1,10 @@
 const User = require("../models/users");
+const BadRequestError = require("../Errors/BadRequestError");
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      res
-        .status(500)
-        .send({ massage:`${err.name}: ${err.message} `});
+    .catch((err) => {res.status(500).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
     });
 };
 
@@ -18,31 +16,24 @@ module.exports.createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res
-          .status(400)
-        return;
+        res.status(400).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
       }
-      res
-        .status(500).send({ massage:`${err.name}: ${err.message} ` });
+      res.status(500).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
     });
 };
 
 module.exports.findUserbyId = (req, res) => {
   User.findById(req.params.id)
-    .orFail(res.status(400).send("Пользователь по указанному id не найден"))
+    .orFail(new NotFoundError('Пользователь по указанному id не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {
-        res.status(400).send("Передан некорректный id");
-        return;
+        throw new BadRequestError("Передан некорректный id");
       }
       if (err.name === "ValidationError") {
-        res.status(400).send("Неверено задано одно из полей");
-        return;
+        throw new BadRequestError("Неверено задано одно из полей");
       }
-      res
-        .status(500)
-        .send({ massage:`${err.name}: ${err.message} ` });
+      res.status(500).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
     });
 };
 
@@ -53,20 +44,16 @@ module.exports.updateUser = (req, res) => {
     { name, about },
     { new: true, runValidators: true }
   )
-    .orFail(new NotFoundError("Пользователь по указанному id не найден"))
+    .orFail(new NotFoundError('Пользователь по указанному id не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {
-        res.status(400).send("Передан некорректный id");
-        return;
+        throw new BadRequestError("Передан некорректный id")
       }
       if (err.name === "ValidationError") {
-        res.status(400).send("Неверено задано одно из полей");
-        return;
+        throw new BadRequestError("Неверено задано одно из полей")
       }
-      res
-        .status(500)
-        .send({ massage:`${err.name}: ${err.message} ` });
+      res.status(500).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
     });
 };
 
@@ -77,19 +64,15 @@ module.exports.updateAvatar = (req, res) => {
     { avatar },
     { new: true, runValidators: true }
   )
-    .orFail(new NotFoundError("Пользователь по указанному id не найден"))
+    .orFail(new NotFoundError('Пользователь по указанному id не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {
-        res.status(400).send("Передан некорректный id");
-        return;
+        throw new BadRequestError("Передан некорректный id");
       }
       if (err.name === "ValidationError") {
-        res.status(400).send("Неверено задано одно из полей");
-        return;
+        throw new BadRequestError("Неверная ссылка на изображение");
       }
-      res
-        .status(500)
-        .send({ massage:`${err.name}: ${err.message} ` });
+      res.status(500).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
     });
 };

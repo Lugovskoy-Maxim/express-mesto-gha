@@ -1,6 +1,4 @@
 const Card = require("../models/cards");
-const NotFaundError = require("../Errors/NotFaundError");
-const BadRequestError = require("../Errors/BadRequestError");
 
 module.exports.getCards = (req, res) => {
   Card.find({})
@@ -17,7 +15,7 @@ module.exports.createCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        throw new BadRequestError("Неверено задано одно из полей");
+        res.status(400).send("Неверено задано одно из полей");
       }
       res
         .status(500)
@@ -32,11 +30,12 @@ module.exports.removeCard = (req, res, next) => {
         card.remove().then(() => res.send({ message: "Карточка удалена" }));
         return;
       }
-      res.send("Недостаточно прав для удаления");
+      res.status(500).send({ massage: `Невозможно удалить чужую карточку` });
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        throw new BadRequestError("Переданы некорректные данные");
+        res.status(400).send({ massage: `Переданы некорректные данные` });
+        return;
       }
       {
         res
@@ -55,7 +54,8 @@ module.exports.likeCard = (req, res) =>
     .orFail(new NotFoundError("Карточка не найдена"))
     .catch((err) => {
       if (err.name === "CastError") {
-        throw new BadRequestError("Переданы некорректные данные");
+        res.status(400).send("Переданы некорректные данные");
+        return;
       }
       {
         res
@@ -70,7 +70,7 @@ module.exports.dislikeCard = (req, res) =>
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true }
   )
-    .orFail(new NotFoundError("Карточка не найдена"))
+    .orFail(res.status(400).send("Карточка не найдена"))
     .catch((err) => {
       res
         .status(500)

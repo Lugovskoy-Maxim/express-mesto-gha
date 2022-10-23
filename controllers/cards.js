@@ -25,13 +25,12 @@ module.exports.createCard = (req, res) => {
 
 module.exports.removeCard = (req, res, next) => {
   Card.findById(req.params.cardId)
+  .orFail(() => {
+    res.status(404).send({ message: `карточка не найдена` });
+    })
     .then((card) => {
       if (card.owner.toString() == req.user._id) {
-        card
-          .remove()
-          .orFail(() => {
-            res.status(404).send({ message: `карточка не найдена` });
-          })
+        card.remove()
           .then(() => res.status(200).send({ message: "Карточка удалена" }));
         return;
       }

@@ -51,7 +51,7 @@ module.exports.likeCard = (req, res) =>
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true }
   )
-    .orFail(res.status(404).send({ message: `Карточка не найдена`}))
+    // .orFail(res.status(404).send({ message: `Карточка не найдена`}))
     .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err.name === "CastError") {
@@ -69,13 +69,16 @@ module.exports.dislikeCard = (req, res) =>
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
-    { new: true }
-  )
-    .orFail(res.status(404).send({ message: `Карточка не найдена`}))
+    { new: true })
+  //   .orFail(res.status(404).send({ message: `Карточка не найдена`}))
     .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err.name === "CastError") {
-        res.status(404).send({ message: `Переданы некорректные данные`});
+        res.status(400).send({ message: `Переданы некорректные данные`});
+        return;
+      }
+      if (err.name === "NOT_FOUND") {
+        res.status(404).send({ message: `Карточка не найдена`});
         return;
       }
       res

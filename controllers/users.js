@@ -10,7 +10,7 @@ module.exports.getUsers = (req, res) => {
     });
 };
 
-module.exports.createUser = (req, res, next) => {
+module.exports.createUser = (req, res) => {
   User.create(req.body)
     .then((user) => res.send({ data: user }))
     .catch((err) => {
@@ -21,26 +21,26 @@ module.exports.createUser = (req, res, next) => {
       res
         .status(500)
         .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
-      next(err);
-    })
-    .catch(next);
+    });
 };
 
-module.exports.findUserbyId = (req, res, next) => {
+module.exports.findUserbyId = (req, res) => {
   User.findById(req.params.id)
     .orFail(() => {
-      res.status(404).send({ message: 'Пользователь с таким id не найден' });
+      const error = new Error('Пользователь с таким id не найден');
+      error.statusCode = 404;
+      throw error;
     })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Ошибка. Проверте правильность id' });
         return;
+      } if (err.statusCode === 404) {
+        res.status(404).send({ message: 'Пользователь с таким id не найден' });
       }
       res.status(500).send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
-      next(err);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.updateUser = (req, res) => {
@@ -50,7 +50,6 @@ module.exports.updateUser = (req, res) => {
     { name, about },
     { new: true, runValidators: true },
   )
-
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {

@@ -21,5 +21,6 @@ app.use(routesUser);
 app.use('/*', (req, res) => res.status(404).send({ message: 'Произошла ошибка, пожалуйста проверте адрес запроса' }));
 
 app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
   console.log(`Приложение запущено на порту ${PORT}`);
 });

@@ -26,7 +26,9 @@ module.exports.createCard = (req, res) => {
 module.exports.removeCard = (req, res) => {
   Card.findById(req.params.cardId)
     .orFail(() => {
-      res.status(404).send({ message: 'карточка не найдена' });
+      const error = new Error('Пользователь с таким id не найден');
+      error.statusCode = 404;
+      throw error;
     })
     .then((card) => {
       const newLocal = card.owner.toString() === req.user._id;
@@ -41,6 +43,8 @@ module.exports.removeCard = (req, res) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
         return;
+      } if (err.statusCode === 404) {
+        res.status(404).send({ message: 'карточка не найдена' });
       }
       res.status(500).send({ message: `Произошла ошибка ${err.name}: ${err.message}` });
     });
@@ -52,13 +56,17 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 )
   .orFail(() => {
-    res.status(404).send({ message: 'карточка не найдена' });
+    const error = new Error('Пользователь с таким id не найден');
+    error.statusCode = 404;
+    throw error;
   })
   .then((card) => res.status(200).send(card))
   .catch((err) => {
     if (err.name === 'CastError') {
       res.status(400).send({ message: 'Переданы некорректные данные' });
       return;
+    } if (err.statusCode === 404) {
+      res.status(404).send({ message: 'карточка не найдена' });
     }
     res
       .status(500)
@@ -71,13 +79,17 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 )
   .orFail(() => {
-    res.status(404).send({ message: 'карточка не найдена' });
+    const error = new Error('Пользователь с таким id не найден');
+    error.statusCode = 404;
+    throw error;
   })
   .then((card) => res.status(200).send(card))
   .catch((err) => {
     if (err.name === 'CastError') {
       res.status(400).send({ message: 'Переданы некорректные данные' });
       return;
+    } if (err.statusCode === 404) {
+      res.status(404).send({ message: 'карточка не найдена' });
     }
     res
       .status(500)

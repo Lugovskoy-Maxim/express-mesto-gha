@@ -13,9 +13,7 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.createUser = (req, res, next) => {
   User.create(req.body)
-    .then((user) => {
-      res.status(200).send(user);
-    })
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "ValidationError") {
         throw new BadRequestError("Неверено задано одно из полей")

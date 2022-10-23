@@ -26,18 +26,18 @@ module.exports.createUser = (req, res, next) => {
 };
 
 module.exports.findUserbyId = (req, res, next) => { //нужно найти err
-  User.findById(req.params.id, {runValidators: true}, {new: true})
-  .orFail(() => {res.status(400).send({ message: err._message})
+  User.findById(req.params.id)
+  .orFail(() => {res.status(400).send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
   })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {
-        return res.status(400).send({ message: err._message})
+        return res.status(404).send({ message: `Пользователя с таким id не найден` });
       }
       if (err.name === "ValidationError") {
-        return res.status(400).send({ message: err._message})
+        return res.status(400).send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
       }
-      res.status(500).send({ message: `Произошла ошибка ${err.name}: ${err._message} ` });
+      res.status(500).send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
     next(err)})
   .catch(next);
 };

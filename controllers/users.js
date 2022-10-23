@@ -6,7 +6,7 @@ module.exports.getUsers = (req, res) => {
     .catch((err) => {
       res
         .status(500)
-        .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
+        .send({ massage:`${err.name}: ${err.message} `});
     });
 };
 
@@ -20,18 +20,17 @@ module.exports.createUser = (req, res) => {
       if (err.name === "ValidationError") {
         res
           .status(400)
-          .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
+          .send({ massage:`${err.name}: ${err.message} ` });
         return;
       }
       res
-        .status(500)
-        .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
+        .status(500).send({ massage:`${err.name}: ${err.message} ` });
     });
 };
 
 module.exports.findUserbyId = (req, res) => {
   User.findById(req.params.id)
-    .orFail(new NotFoundError("Пользователь по указанному id не найден"))
+    .orFail(res.status(400).send("Пользователь по указанному id не найден"))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {
@@ -44,7 +43,7 @@ module.exports.findUserbyId = (req, res) => {
       }
       res
         .status(500)
-        .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
+        .send({ massage:`${err.name}: ${err.message} ` });
     });
 };
 
@@ -68,7 +67,7 @@ module.exports.updateUser = (req, res) => {
       }
       res
         .status(500)
-        .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
+        .send({ massage:`${err.name}: ${err.message} ` });
     });
 };
 
@@ -83,13 +82,15 @@ module.exports.updateAvatar = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {
-        throw new BadRequestError("Передан некорректный id");
+        res.status(400).send("Передан некорректный id");
+        return;
       }
       if (err.name === "ValidationError") {
-        throw new BadRequestError("Неверено задана  полей");
+        res.status(400).send("Неверено задано одно из полей");
+        return;
       }
       res
         .status(500)
-        .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
+        .send({ massage:`${err.name}: ${err.message} ` });
     });
 };

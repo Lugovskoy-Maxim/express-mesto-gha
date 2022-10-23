@@ -24,8 +24,8 @@ module.exports.createUser = (req, res, next) => {
       res
         .status(500)
         .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
-    })
-    next(err)
+
+    next(err)})
   .catch(next);
 };
 

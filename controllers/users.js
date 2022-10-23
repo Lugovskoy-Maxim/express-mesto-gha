@@ -1,5 +1,4 @@
 const User = require("../models/users");
-const NotFaundError = require("../Errors/NotFaundError");
 const BadRequestError = require("../Errors/BadRequestError");
 
 module.exports.getUsers = (req, res) => {
@@ -18,6 +17,7 @@ module.exports.createUser = (req, res) => {
     .catch((err) => {
       if (err.name === "ValidationError") {
         throw new BadRequestError("Неверено задано одно из полей");
+        return
       }
       res.status(500).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
     });
@@ -30,9 +30,11 @@ module.exports.findUserbyId = (req, res) => {
     .catch((err) => {
       if (err.name === "CastError") {
         throw new BadRequestError("Передан некорректный id");
+        return
       }
       if (err.name === "ValidationError") {
         throw new BadRequestError("Неверено задано одно из полей");
+        return
       }
       res.status(500).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
     });
@@ -49,10 +51,12 @@ module.exports.updateUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {
-        throw new BadRequestError("Передан некорректный id");
+        throw new BadRequestError("Передан некорректный id")
+        return
       }
       if (err.name === "ValidationError") {
-        throw new BadRequestError("Неверено задано одно из полей");
+        throw new BadRequestError("Неверено задано одно из полей")
+        return
       }
       res.status(500).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
     });

@@ -34,9 +34,9 @@ module.exports.findUserbyId = (req, res, next) => { //нужно найти err
       if (err.name === "CastError") {
         return res.status(400).send({ message: `Ошибка. Проверте правильность id` });
       }
-      if (err.name === "ValidationError") {
-        return res.status(400).send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
-      }
+      // if (err.name === "ValidationError") {
+      //   return res.status(400).send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
+      // }
       res.status(500).send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
     next(err)})
   .catch(next);

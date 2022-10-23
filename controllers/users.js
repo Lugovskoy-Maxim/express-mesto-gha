@@ -27,10 +27,7 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.findUserbyId = (req, res, next) => { //нужно найти err
   User.findById(req.params.id, {runValidators: true}, {new: true})
-  .orFail(() => {
-    const error = new Error('Пользователь по заданному id отсутствует в базе');
-    error.name = 'NotFoundError';
-    throw error;
+  .orFail(() => {res.status(400).send({ message: err._message})
   })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {

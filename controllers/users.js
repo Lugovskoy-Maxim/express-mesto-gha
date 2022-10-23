@@ -7,7 +7,7 @@ module.exports.getUsers = (req, res) => {
     .catch((err) => {
       res
         .status(500)
-        .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
+        .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
     });
 };
 
@@ -60,7 +60,7 @@ module.exports.updateUser = (req, res) => {
       }
       res
         .status(500)
-        .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
+        .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
     });
 };
 
@@ -82,6 +82,6 @@ module.exports.updateAvatar = (req, res) => {
       }
       res
         .status(500)
-        .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
+        .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
     });
 };

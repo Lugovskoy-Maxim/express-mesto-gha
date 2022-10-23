@@ -3,7 +3,7 @@ const Card = require("../models/cards");
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => res.status(500).send({ massage: "Error type:", err }));
+    .catch((err) => res.status(500).send({ message: "Error type:", err }));
 };
 
 module.exports.createCard = (req, res) => {
@@ -19,7 +19,7 @@ module.exports.createCard = (req, res) => {
       }
       res
         .status(500)
-        .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
+        .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
     });
 };
 
@@ -30,17 +30,17 @@ module.exports.removeCard = (req, res, next) => {
         card.remove().then(() => res.status(200).send({ message: "Карточка удалена" }));
         return;
       }
-      res.status(500).send({ massage: `Невозможно удалить чужую карточку` });
+      res.status(500).send({ message: `Невозможно удалить чужую карточку` });
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        res.status(400).send({ massage: `Переданы некорректные данные` });
+        res.status(400).send({ message: `Переданы некорректные данные` });
         return;
       }
       {
         res
           .status(500)
-          .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
+          .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
       }
     });
 };
@@ -51,8 +51,8 @@ module.exports.likeCard = (req, res) =>
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true }
   )
-    .orFail(res.status(404).send({ massage: `Карточка не найдена`}))
-    .then((card) => res.send(card))
+    .orFail(res.status(404).send({ message: `Карточка не найдена`}))
+    .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err.name === "CastError") {
         res.status(400).send("Переданы некорректные данные");
@@ -61,7 +61,7 @@ module.exports.likeCard = (req, res) =>
       {
         res
           .status(500)
-          .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
+          .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
       }
     });
 
@@ -71,15 +71,15 @@ module.exports.dislikeCard = (req, res) =>
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true }
   )
-    .orFail(res.status(404).send({ massage: `Карточка не найдена`}))
-    .then((card) => res.send(card))
+    .orFail(res.status(404).send({ message: `Карточка не найдена`}))
+    .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err.name === "CastError") {
-        res.status(400).send({ massage: `Переданы некорректные данные`});
+        res.status(400).send({ message: `Переданы некорректные данные`});
         return;
       }
       res
         .status(500)
-        .send({ massage: `Произошла ошибка ${err.name}: ${err.message} ` });
+        .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
     })
   ;

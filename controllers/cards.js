@@ -13,7 +13,15 @@ module.exports.createCard = (req, res) => {
     .then((card) => {
       res.status(200).send(card);
     })
-    .catch((err) => res.status(500).send({ massage: "Error type:", err }));
+    .catch((err) => {
+      if (err.name === "CastError") {
+        throw new BadRequestError("Передан некорректный id");
+      }
+      if (err.name === "ValidationError") {
+        throw new BadRequestError("Неверено задано одно из полей");
+      }
+      res.status(500).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
+    });
 };
 
 module.exports.removeCard = (req, res, next) => {
@@ -26,7 +34,15 @@ module.exports.removeCard = (req, res, next) => {
       }
       res.send('Недостаточно прав для удаления');
     })
-    .catch((err) => res.status(500).send({ massage: "Error type:", err }));
+    .catch((err) => {
+      if (err.name === "CastError") {
+        throw new BadRequestError("Передан некорректный id");
+      }
+      if (err.name === "ValidationError") {
+        throw new BadRequestError("Неверено задано одно из полей");
+      }
+      res.status(500).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
+    });
 }
 
 module.exports.likeCard = (req, res) =>
@@ -34,11 +50,29 @@ module.exports.likeCard = (req, res) =>
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true }
-  );
+  )    .catch((err) => {
+    if (err.name === "CastError") {
+      throw new BadRequestError("Передан некорректный id");
+    }
+    if (err.name === "ValidationError") {
+      throw new BadRequestError("Неверено задано одно из полей");
+    }
+    res.status(500).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
+  });
 
 module.exports.dislikeCard = (req, res) =>
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true }
-  );
+
+  )
+  .catch((err) => {
+    if (err.name === "CastError") {
+      throw new BadRequestError("Передан некорректный id");
+    }
+    if (err.name === "ValidationError") {
+      throw new BadRequestError("Неверено задано одно из полей");
+    }
+    res.status(500).send({ massage: `Произошла ошибка ${err.name}: ${err.message} `})
+  });

@@ -13,7 +13,7 @@
     "type": "git",
     "url": "git+https://github.com/Lugovskoy-Maxim/express-mesto-gha.git"
   },
-  "author": "",
+  "author": "Lugovskoy-Maxim",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Lugovskoy-Maxim/express-mesto-gha/issues"

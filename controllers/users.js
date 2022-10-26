@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const User = require('../models/users');
 
 module.exports.getUsers = (req, res) => {
@@ -83,5 +85,36 @@ module.exports.updateAvatar = (req, res) => {
       res
         .status(500)
         .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
+    });
+};
+
+module.exports.register = (req, res) => {
+  bcrypt.hash(req.body.password, 10)
+    .then((hash) => User.create({
+      email: req.body.email,
+      password: hash,
+    }))
+    .then((user) => {
+      res.status(201).send({
+        _id: user._id,
+        email: user.email,
+      });
+    })
+    .catch((err) => {
+      res.status(400).send(err);
+    });
+};
+// токен хранится 7 дней
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      res.send({
+        token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' }),
+      });
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
     });
 };

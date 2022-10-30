@@ -28,7 +28,9 @@ module.exports.createUser = (req, res, next) => {
       avatar,
       about,
     }))
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => res.status(201).send({
+      name: user.name, email: user.email, avatar: user.avatar, about: user.about,
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: err.message });
@@ -119,24 +121,6 @@ module.exports.updateAvatar = (req, res, next) => {
     .catch(next);
 };
 
-// module.exports.createUser = (req, res) => {
-//   bcrypt
-//     .hash(req.body.password, 10)
-//     .then((hash) => User.create({
-//       email: req.body.email,
-//       password: hash,
-//     }))
-//     .then((user) => {
-//       res.status(201).send({
-//         _id: user._id,
-//         email: user.email,
-//       });
-//     })
-//     .catch((err) => {
-//       res.status(400).send(err);
-//     });
-// };
-// токен хранится 7 дней
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 

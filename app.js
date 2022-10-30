@@ -6,7 +6,7 @@ const { login, createUser } = require('./controllers/users');
 const routesUser = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const auth = require('./middlewares/auth');
-const { validateLogin } = require('./middlewares/validation');
+const { validateLogin, validateRegister } = require('./middlewares/validation');
 
 const { PORT = 3000, MANGO_URL = 'mongodb://localhost:27017/mestodb' } = process.env;
 mongoose.connect(MANGO_URL);
@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 // добавить проверку почты на уже созданиые
 
 app.use('/signin', validateLogin, login);
-app.use('/signup', validateLogin, createUser);
+app.use('/signup', validateRegister, createUser);
 // обработчик ошибок celebrate
 app.use(errors());
 app.use(auth);

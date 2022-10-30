@@ -19,7 +19,7 @@ app.use('/signin', validateLogin, login);
 app.use('/signup', validateLogin, createUser);
 // обработчик ошибок celebrate
 app.use(errors());
-// app.use(auth);
+app.use(auth);
 
 app.use(cardRouter);
 app.use(routesUser);

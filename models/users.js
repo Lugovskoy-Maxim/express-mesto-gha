@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const { isEmail, isURL } = require('validator/lib/isEmail');
 
 const { Schema } = mongoose;
 
@@ -15,10 +14,6 @@ const userSchema = new Schema(
     avatar: {
       type: String,
       default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-      validate: {
-        validator: (v) => isURL(v),
-        message: 'Неправильный формат ссылки',
-      },
     },
     about: {
       type: String,
@@ -30,10 +25,6 @@ const userSchema = new Schema(
       type: String,
       unique: true,
       required: true,
-      validate: {
-        validator: (v) => isEmail(v),
-        message: 'Неправильный формат почты',
-      },
     },
     password: {
       type: String,

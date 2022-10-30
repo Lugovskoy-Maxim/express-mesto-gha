@@ -3,36 +3,36 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/users');
 const errorNotFaund = require('../errors/errorNotFaund');
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       res
         .status(500)
         .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
-    });
+    })
+    .catch(next);
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   bcrypt
     .hash(req.body.password, 10)
     .then((hash) => User.create({
       email: req.body.email,
       password: hash,
     }))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: err.message });
         return;
       }
-      res
-        .status(500)
-        .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
-    });
+      next(err);
+    })
+    .catch(next);
 };
 
-module.exports.findUserbyId = (req, res) => {
+module.exports.findUserbyId = (req, res, next) => {
   User.findById(req.params.id)
     .orFail(() => {
       throw errorNotFaund;
@@ -47,10 +47,9 @@ module.exports.findUserbyId = (req, res) => {
         res.status(404).send({ message: 'Пользователь с таким id не найден' });
         return;
       }
-      res
-        .status(500)
-        .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
-    });
+      next(err);
+    })
+    .catch(next);
 };
 
 module.exports.getUserInfo = (req, res, next) => {
@@ -65,10 +64,11 @@ module.exports.getUserInfo = (req, res, next) => {
         return;
       }
       next(err);
-    });
+    })
+    .catch(next);
 };
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -81,13 +81,12 @@ module.exports.updateUser = (req, res) => {
         res.status(400).send({ message: err.message });
         return;
       }
-      res
-        .status(500)
-        .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
-    });
+      next(err);
+    })
+    .catch(next);
 };
 
-module.exports.updateAvatar = (req, res) => {
+module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -104,31 +103,30 @@ module.exports.updateAvatar = (req, res) => {
         res.status(400).send({ message: err.message });
         return;
       }
-      res
-        .status(500)
-        .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
-    });
+      next(err);
+    })
+    .catch(next);
 };
 
-module.exports.createUser = (req, res) => {
-  bcrypt
-    .hash(req.body.password, 10)
-    .then((hash) => User.create({
-      email: req.body.email,
-      password: hash,
-    }))
-    .then((user) => {
-      res.status(201).send({
-        _id: user._id,
-        email: user.email,
-      });
-    })
-    .catch((err) => {
-      res.status(400).send(err);
-    });
-};
+// module.exports.createUser = (req, res) => {
+//   bcrypt
+//     .hash(req.body.password, 10)
+//     .then((hash) => User.create({
+//       email: req.body.email,
+//       password: hash,
+//     }))
+//     .then((user) => {
+//       res.status(201).send({
+//         _id: user._id,
+//         email: user.email,
+//       });
+//     })
+//     .catch((err) => {
+//       res.status(400).send(err);
+//     });
+// };
 // токен хранится 7 дней
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
@@ -139,5 +137,6 @@ module.exports.login = (req, res) => {
     })
     .catch((err) => {
       res.status(401).send({ message: err.message });
-    });
+    })
+    .catch(next);
 };

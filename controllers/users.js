@@ -13,7 +13,12 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  User.create(req.body)
+  bcrypt
+    .hash(req.body.password, 10)
+    .then((hash) => User.create({
+      email: req.body.email,
+      password: hash,
+    }))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -38,11 +43,14 @@ module.exports.findUserbyId = (req, res) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Ошибка. Проверте правильность id' });
         return;
-      } if (err.statusCode === 404) {
+      }
+      if (err.statusCode === 404) {
         res.status(404).send({ message: 'Пользователь с таким id не найден' });
         return;
       }
-      res.status(500).send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
+      res
+        .status(500)
+        .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
     });
 };
 
@@ -88,8 +96,9 @@ module.exports.updateAvatar = (req, res) => {
     });
 };
 
-module.exports.register = (req, res) => {
-  bcrypt.hash(req.body.password, 10)
+module.exports.createUser = (req, res) => {
+  bcrypt
+    .hash(req.body.password, 10)
     .then((hash) => User.create({
       email: req.body.email,
       password: hash,

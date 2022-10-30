@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const isEmail = require('validator/lib/isEmail');
+const { isEmail, isURL } = require('validator/lib/isEmail');
 
 const { Schema } = mongoose;
 
@@ -15,6 +15,10 @@ const userSchema = new Schema(
     avatar: {
       type: String,
       default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+      validate: {
+        validator: (v) => isURL(v),
+        message: 'Неправильный формат ссылки',
+      },
     },
     about: {
       type: String,
@@ -34,7 +38,7 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: true,
-      minlength: 8,
+      minlength: 8, // не работает
     },
   },
   {
@@ -43,7 +47,7 @@ const userSchema = new Schema(
 );
 
 // проверка логина а после пароля (по очереди что бы не грузить сервер лишней работой)
-userSchema.statics.findUserByCredentials = function (email, password) {
+userSchema.statics.findUserByCredentials = function validateReq(email, password) {
   return this.findOne({ email }).then((user) => {
     if (!user) {
       return Promise.reject(new Error('Неправильные почта или пароль'));

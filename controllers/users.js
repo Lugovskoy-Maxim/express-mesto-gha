@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/users');
 const errorNotFaund = require('../errors/errorNotFaund');
+const findUserByCredentials = require('../models/users');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -135,11 +136,11 @@ module.exports.updateAvatar = (req, res, next) => {
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
-  return User.findUserByCredentials(email, password)
+  return findUserByCredentials(email, password)
     .then((user) => {
-      res.status(200).send({
-        token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' }),
-      });
+      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
+
+      res.status(200).cookie('jwt', token, { maxAge: 3600000, httpOnly: true }).send({ token });
     })
     .catch((err) => {
       res.status(401).send({ message: err.message });

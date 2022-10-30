@@ -15,11 +15,17 @@ module.exports.getUsers = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
   bcrypt
-    .hash(req.body.password, 10)
+    .hash(password, 10)
     .then((hash) => User.create({
-      email: req.body.email,
+      email,
       password: hash,
+      name,
+      avatar,
+      about,
     }))
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {

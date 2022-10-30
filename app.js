@@ -20,9 +20,22 @@ app.use('/signup', validationLogin, createUser);
 // обработчик ошибок celebrate
 app.use(errors());
 app.use(auth);
+
 app.use(cardRouter);
 app.use(routesUser);
-app.use('/*', (req, res) => res.status(404).send({ message: 'Произошла ошибка, пожалуйста проверте адрес запроса' }));
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
+  next();
+});
+app.use('/*', (req, res) => res.status(404).send({ message: 'Страницы не существует, пожалуйста проверте адрес' }));
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`Приложение запущено на порту ${PORT}`);

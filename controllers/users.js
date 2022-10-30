@@ -54,6 +54,23 @@ module.exports.findUserbyId = (req, res) => {
     });
 };
 
+module.exports.getUserInfo = (req, res, next) => {
+  User.findById(req.user._id)
+    .orFail(() => {
+      const error = new Error('Пользователь с таким id не найден');
+      error.statusCode = 404;
+      throw error;
+    })
+    .then((user) => res.send(user))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Ошибка. Проверте правильность id' });
+        return;
+      }
+      next(err);
+    });
+};
+
 module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(

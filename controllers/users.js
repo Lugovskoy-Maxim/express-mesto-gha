@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/users');
-const errorNotFaund = require('../errors/errorNotFaund');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -41,9 +40,6 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.findUserbyId = (req, res, next) => {
   User.findById(req.params.id)
-    .orFail(() => {
-      throw errorNotFaund;
-    })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -61,9 +57,6 @@ module.exports.findUserbyId = (req, res, next) => {
 
 module.exports.getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
-    .orFail(() => {
-      throw errorNotFaund;
-    })
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {

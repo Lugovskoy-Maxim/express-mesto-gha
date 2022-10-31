@@ -131,7 +131,7 @@ module.exports.login = (req, res, next) => {
       res.status(200).cookie('jwt', token, { maxAge: 3600000, httpOnly: true }).send({ token });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ERR_HTTP_HEADERS_SENT') {
         res.status(401).send({ message: err.message });
       }
       next(err);

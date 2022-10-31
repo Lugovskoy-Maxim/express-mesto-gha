@@ -19,12 +19,12 @@ app.use('/signin', validateLogin, login);
 app.use('/signup', validateRegister, createUser);
 // обработчик ошибок celebrate
 app.use(errors());
-// app.use(auth);
+app.use(auth);
 
 app.use(cardRouter);
 app.use(routesUser);
 app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
+  const { statusCode, message } = err;
 
   res
     .status(statusCode)

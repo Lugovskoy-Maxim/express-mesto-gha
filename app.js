@@ -29,18 +29,18 @@ app.use(auth);
 app.use(cardRouter);
 app.use(routesUser);
 app.use(errors());
-// app.use((err, req, res, next) => {
-//   const { statusCode, message } = err;
+app.use((err, req, res, next) => {
+  const { statusCode, message } = err;
 
-//   res
-//     .status(statusCode)
-//     .send({
-//       message: statusCode === 500
-//         ? 'На сервере произошла ошибка'
-//         : message,
-//     });
-//   next();
-// });
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
+  next();
+});
 app.use('/*', (req, res) => res.status(404).send({ message: 'Страницы не существует, пожалуйста проверте адрес' }));
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console

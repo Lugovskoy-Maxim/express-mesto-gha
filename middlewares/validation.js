@@ -17,7 +17,7 @@ const validateRegister = celebrate({
     about: Joi.string().min(2).max(30),
     name: Joi.string().min(2).max(30),
     avatar: Joi.string().custom((value) => {
-      if (!isURL(value)) throw new CelebrateError('Некорректный URL');
+      if (!isURL(value)) throw new CelebrateError('Некорректная ссылка на изображение');
       return value;
     }),
     email: Joi.string().required().custom((value) => {
@@ -45,7 +45,7 @@ const validateUser = celebrate({
 const validateUserAvatar = celebrate({
   body: Joi.object().keys({
     avatar: Joi.string().custom((value) => {
-      if (!isURL(value)) throw new CelebrateError('Некорректный URL');
+      if (!isURL(value)) throw new CelebrateError('Некорректная ссылка на изображение');
       return value;
     }),
   }),
@@ -63,6 +63,16 @@ const validateCardId = celebrate({
   }),
 });
 
+const validateCard = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    link: Joi.string().custom((value) => {
+      if (!isURL(value)) throw new CelebrateError('Некорректная ссылка на изображение');
+      return value;
+    }),
+  }),
+});
+
 module.exports = {
   validateLogin,
   validateUserAvatar,
@@ -71,4 +81,5 @@ module.exports = {
   validateRegister,
   validateUserId,
   validateCardId,
+  validateCard,
 };

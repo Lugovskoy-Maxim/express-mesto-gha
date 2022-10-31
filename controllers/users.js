@@ -47,12 +47,10 @@ module.exports.findUserbyId = (req, res, next) => {
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Ошибка. Проверте правильность id' });
-        return;
+        throw new BadRequestError('Переданы некорректный id');
       }
       if (err.statusCode === 404) {
-        res.status(404).send({ message: 'Пользователь с таким id не найден' });
-        return;
+        throw new NotFaundError('Пользователь с указаным id не найден');
       }
       next(err);
     })
@@ -64,8 +62,7 @@ module.exports.getUserInfo = (req, res, next) => {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Ошибка. Проверте правильность id' });
-        return;
+        throw new NotFaundError('Пользователь с указаным id не найден');
       }
       next(err);
     })

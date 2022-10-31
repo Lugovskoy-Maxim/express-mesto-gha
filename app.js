@@ -29,7 +29,8 @@ app.use(auth);
 
 app.use(cardRouter);
 app.use(routesUser);
-app.use('/*', () => new NotFoundError('Запрашиваемая страница не найдена'));
+app.use('/*', () => { throw new NotFoundError('Запрашиваемая страница не найдена'); });
+
 app.use(errors());
 app.use((err, req, res, next) => {
   const { statusCode, message } = err;

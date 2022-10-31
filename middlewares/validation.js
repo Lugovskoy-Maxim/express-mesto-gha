@@ -65,8 +65,8 @@ const validateCardId = celebrate({
 
 const validateCard = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    link: Joi.string().custom((value) => {
+    name: Joi.string().min(2).max(30).required(),
+    link: Joi.string().required().custom((value) => {
       if (!isURL(value)) throw new CelebrateError('Некорректная ссылка на изображение');
       return value;
     }),

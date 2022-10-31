@@ -3,8 +3,6 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/users');
 const NotFoundError = require('../errors/NotFoundError'); // 404
 const ConflictError = require('../errors/ConflictError'); // 409
-// const ForbiddenErrors = require('../errors/ForbiddenErrors'); // 403
-// const AuthError = require('../errors/AuthError'); // 401
 const BadRequestError = require('../errors/BadRequestError'); // 400
 
 module.exports.getUsers = (req, res, next) => {

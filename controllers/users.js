@@ -43,14 +43,11 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.findUserbyId = (req, res, next) => {
   User.findById(req.params.id)
-    .orFail(new NotFaundError())
+    .orFail(new NotFaundError('Пользователь с указаным id не найден'))
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
         throw new BadRequestError('Переданы некорректный id');
-      }
-      if (err.statusCode === 404) {
-        throw new NotFaundError('Пользователь с указаным id не найден');
       }
       next(err);
     })
@@ -59,10 +56,11 @@ module.exports.findUserbyId = (req, res, next) => {
 
 module.exports.getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
-    .then((user) => res.status(200).send(user))
+    .orFail(new NotFaundError('Пользователь с указаным id не найден'))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new NotFaundError('Пользователь с указаным id не найден');
+        throw new NotFaundError('Переданы некорректный id');
       }
       next(err);
     })

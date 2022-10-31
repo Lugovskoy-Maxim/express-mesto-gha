@@ -53,13 +53,13 @@ const validateUserAvatar = celebrate({
 
 const validateUserId = celebrate({
   params: Joi.object().keys({
-    id: Joi.string().length(24),
+    id: Joi.string().length(24).hex().required(),
   }),
 });
 
 const validateCardId = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().length(24),
+    cardId: Joi.string().length(24).hex().required(),
   }),
 });
 

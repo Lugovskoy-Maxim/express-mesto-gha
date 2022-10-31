@@ -3,8 +3,11 @@ const { isURL, isEmail } = require('validator');
 
 const validateLogin = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().min(8).required(),
+    email: Joi.string().required().custom((value) => {
+      if (!isEmail(value)) throw new CelebrateError('Некорректный Email');
+      return value;
+    }),
+    password: Joi.string().required().min(8),
   }),
 });
 

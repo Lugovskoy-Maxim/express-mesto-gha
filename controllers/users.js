@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/users');
 const NotFaundError = require('../errors/NotFaundError'); // 404
-// const ConflictError = require('../errors/ConflictError'); // 409
+const ConflictError = require('../errors/ConflictError'); // 409
 // const ForbiddenErrors = require('../errors/ForbiddenErrors'); // 403
 // const AuthError = require('../errors/AuthError'); // 401
 const BadRequestError = require('../errors/BadRequestError'); // 400
@@ -34,7 +34,7 @@ module.exports.createUser = (req, res, next) => {
         throw new BadRequestError('Переданы некорректные данные при создании пользователя');
       }
       if (err.code === 11000) {
-        throw new BadRequestError('Пользователь с данным email уже существует');
+        throw new ConflictError();
       }
       next(err);
     })

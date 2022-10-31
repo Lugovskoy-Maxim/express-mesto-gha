@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/users');
+const NotFaundError = require('../errors/NotFaundError');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -40,6 +41,7 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.findUserbyId = (req, res, next) => {
   User.findById(req.params.id)
+    .orFail(new NotFaundError('Пользователя с указаным id не существует'))
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {

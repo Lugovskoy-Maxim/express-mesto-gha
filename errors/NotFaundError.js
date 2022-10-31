@@ -1,8 +1,8 @@
-class errorNotFaund extends Error {
+class NotFaundError extends Error {
   constructor(message) {
     super(message);
     this.statusCode = 404;
   }
 }
 
-module.exports = { errorNotFaund };
+module.exports = NotFaundError;

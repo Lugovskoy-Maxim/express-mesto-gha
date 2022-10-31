@@ -53,7 +53,7 @@ const validateUserAvatar = celebrate({
 
 const validateUserId = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().length(24),
+    id: Joi.string().length(24),
   }),
 });
 

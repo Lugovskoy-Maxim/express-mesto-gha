@@ -130,7 +130,7 @@ module.exports.login = (req, res, next) => {
       res.status(200).cookie('jwt', token, { maxAge: 3600000, httpOnly: true }).send({ token });
     })
     .catch((err) => {
-      if (err.name === 'RangeError') {
+      if (err.name === 'CastError') {
         res.status(401).send({ message: err.message });
       }
       next(err);

@@ -44,7 +44,10 @@ const validateUser = celebrate({
 
 const validateUserAvatar = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.link().required(),
+    avatar: Joi.string().custom((value) => {
+      if (!isURL(value)) throw new CelebrateError('Некорректный URL');
+      return value;
+    }),
   }),
 });
 

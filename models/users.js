@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const { Schema } = mongoose;
+// const { Schema } = mongoose;
 
-const userSchema = new Schema(
+const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -29,7 +29,7 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: true,
-      // селект никуя не работает
+      // селект никуя не работает, пара костылей все исправят )
       select: false,
       minlength: 2,
     },

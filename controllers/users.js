@@ -134,6 +134,7 @@ module.exports.login = (req, res, next) => {
       if (err.name === 'CastError') {
         res.status(401).send({ message: err.message });
       }
+      next(err);
     })
     .catch(next);
 };

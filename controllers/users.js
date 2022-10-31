@@ -6,11 +6,6 @@ const errorNotFaund = require('../errors/errorNotFaund');
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      res
-        .status(500)
-        .send({ message: `Произошла ошибка ${err.name}: ${err.message} ` });
-    })
     .catch(next);
 };
 

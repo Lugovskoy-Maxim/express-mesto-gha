@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/users');
-const NotFaundError = require('../errors/NotFaundError'); // 404
+const NotFoundError = require('../errors/NotFoundError'); // 404
 const ConflictError = require('../errors/ConflictError'); // 409
 // const ForbiddenErrors = require('../errors/ForbiddenErrors'); // 403
 // const AuthError = require('../errors/AuthError'); // 401
@@ -43,11 +43,11 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.findUserbyId = (req, res, next) => {
   User.findById(req.params.id)
-    .orFail(new NotFaundError('Пользователь с указаным id не найден'))
-    .then((user) => res.status(200).send({ data: user }))
+    .orFail(new NotFoundError('Пользователь с указаным id не найден'))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Переданы некорректный id');
+        throw new BadRequestError('Передан некорректный id');
       }
       next(err);
     })
@@ -56,11 +56,11 @@ module.exports.findUserbyId = (req, res, next) => {
 
 module.exports.getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
-    .orFail(new NotFaundError('Пользователь с указаным id не найден'))
+    .orFail(new NotFoundError('Пользователь с указаным id не найден'))
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new NotFaundError('Переданы некорректный id');
+        throw new NotFoundError('Передан некорректный id');
       }
       next(err);
     })
@@ -74,11 +74,10 @@ module.exports.updateUser = (req, res, next) => {
     { name, about },
     { new: true, runValidators: true },
   )
-    .then((user) => res.status(200).send({ data: user }))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        res.status(400).send({ message: err.message });
-        return;
+        throw new BadRequestError('Переданы некорректные данные пользователя');
       }
       next(err);
     })
@@ -92,15 +91,14 @@ module.exports.updateAvatar = (req, res, next) => {
     { avatar },
     { new: true, runValidators: true },
   )
-    .then((user) => res.status(200).send({ data: user }))
+    .orFail(new NotFoundError('Пользователь с указаным id не найден'))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: err.message });
-        return;
+        throw new BadRequestError('Передан некорректный id');
       }
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: err.message });
-        return;
+        throw new BadRequestError('Ошибка. Проверьте правильность введенных данных');
       }
       next(err);
     })
@@ -114,10 +112,7 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
 
-      res.status(200).cookie('jwt', token, { maxAge: 3600000, httpOnly: true }).send({ token });
-    })
-    .catch((err) => {
-      res.status(401).send({ message: err.message });
+      res.cookie('jwt', token, { maxAge: 3600000, httpOnly: true }).send({ token });
     })
     .catch(next);
 };

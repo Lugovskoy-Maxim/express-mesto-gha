@@ -41,7 +41,7 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.findUserbyId = (req, res, next) => {
   User.findById(req.params.id)
-    .orFail(new NotFaundError('Пользователя с указаным id не существует'))
+    .orFail(new NotFaundError())
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {

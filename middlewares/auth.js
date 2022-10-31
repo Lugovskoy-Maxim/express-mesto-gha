@@ -7,7 +7,8 @@ const AuthError = require('../errors/AuthError');
 // const extractBearerToken = (header) => header.replace('Bearer ', '');
 
 // eslint-disable-next-line consistent-return
-const auth = (req, res, next) => {
+
+module.exports.auth = (req, res, next) => {
   const token = req.cookies.jwt;
   let payload;
 
@@ -21,5 +22,3 @@ const auth = (req, res, next) => {
 
   next(); // пропускаем запрос дальше
 };
-
-module.exports = auth;

@@ -8,6 +8,7 @@ const routesUser = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const auth = require('./middlewares/auth');
 const { validateLogin, validateRegister } = require('./middlewares/validation');
+const NotFoundError = require('./errors/NotFoundError'); // 404
 
 const { PORT = 3000, MANGO_URL = 'mongodb://localhost:27017/mestodb' } = process.env;
 mongoose.connect(MANGO_URL);
@@ -28,6 +29,7 @@ app.use(auth);
 
 app.use(cardRouter);
 app.use(routesUser);
+app.use('/*', () => new NotFoundError('Запрашиваемая страница не найдена'));
 app.use(errors());
 app.use((err, req, res, next) => {
   const { statusCode, message } = err;
@@ -41,7 +43,6 @@ app.use((err, req, res, next) => {
     });
   next();
 });
-app.use('/*', (req, res) => res.status(404).send({ message: 'Страницы не существует, пожалуйста проверте адрес' }));
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`Приложение запущено на порту ${PORT}`);

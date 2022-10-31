@@ -7,13 +7,13 @@ const validateLogin = celebrate({
       if (!isEmail(value)) throw new CelebrateError('Некорректный Email');
       return value;
     }),
-    password: Joi.string().required().min(8),
+    password: Joi.string().required(),
   }),
 });
 
 const validateRegister = celebrate({
   body: Joi.object().keys({
-    password: Joi.string().min(8).required(),
+    password: Joi.string().required(),
     about: Joi.string().min(2).max(30),
     name: Joi.string().min(2).max(30),
     avatar: Joi.string().custom((value) => {

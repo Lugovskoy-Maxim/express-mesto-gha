@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const { Joi, CelebrateError } = require('celebrate');
-const { isURL } = require('validator');
 const AuthError = require('../errors/AuthError');
 
 const userSchema = new mongoose.Schema(
@@ -14,10 +12,12 @@ const userSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
-      validate: Joi.string().custom((value) => {
-        if (!isURL(value)) throw new CelebrateError('Некорректная ссылка на изображение');
-        return value;
-      }),
+      validate: {
+        validator(v) {
+          return /^https?:\/\/(www\.)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]{1,}/i.test(v);
+        },
+        message: (props) => `${props.value} is not a valid phone number!`,
+      },
       default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     },
     about: {

@@ -12,6 +12,12 @@ const userSchema = new Schema(
     },
     link: {
       type: String,
+      validate: {
+        validator(v) {
+          return /^https?:\/\/(www\.)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]{1,}/i.test(v);
+        },
+        message: () => 'Ошибка. Неверный формат ссылки',
+      },
       required: true,
     },
     owner: {

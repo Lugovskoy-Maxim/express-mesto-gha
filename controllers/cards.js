@@ -3,10 +3,10 @@ const NotFoundError = require('../errors/NotFoundError'); // 404
 const ForbiddenErrors = require('../errors/ForbiddenErrors'); // 403
 const BadRequestError = require('../errors/BadRequestError'); // 400
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => res.status(500).send({ message: 'Error type:', err }));
+    .catch(next);
 };
 
 module.exports.createCard = (req, res, next) => {

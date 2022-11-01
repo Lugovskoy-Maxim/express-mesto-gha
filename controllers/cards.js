@@ -17,7 +17,7 @@ module.exports.createCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('Ошибка. Проверьте правильность введенных данныхПередан некорректный id');
+        next(new BadRequestError('Ошибка. Проверьте правильность введенных данныхПередан некорректный id'));
       }
       next(err);
     });
@@ -37,11 +37,10 @@ module.exports.removeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Переданы некорректные данные');
+        next(new BadRequestError('Переданы некорректные данные'));
       }
       next(err);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.likeCard = (req, res, next) => Card.findByIdAndUpdate(
@@ -53,11 +52,10 @@ module.exports.likeCard = (req, res, next) => Card.findByIdAndUpdate(
   .then((card) => res.send(card))
   .catch((err) => {
     if (err.name === 'CastError') {
-      throw new BadRequestError('Переданы некорректные данные');
+      next(new BadRequestError('Переданы некорректные данные'));
     }
     next(err);
-  })
-  .catch(next);
+  });
 
 module.exports.dislikeCard = (req, res, next) => Card.findByIdAndUpdate(
   req.params.cardId,
@@ -68,8 +66,7 @@ module.exports.dislikeCard = (req, res, next) => Card.findByIdAndUpdate(
   .then((card) => res.send(card))
   .catch((err) => {
     if (err.name === 'CastError') {
-      throw new BadRequestError('Переданы некорректные данные');
+      next(new BadRequestError('Переданы некорректные данные'));
     }
     next(err);
-  })
-  .catch(next);
+  });

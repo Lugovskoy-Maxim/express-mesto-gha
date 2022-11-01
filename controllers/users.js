@@ -29,14 +29,13 @@ module.exports.createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('Переданы некорректные данные при создании пользователя');
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
       }
       if (err.code === 11000) {
-        throw new ConflictError('Пользователь с данным email уже существует');
+        next(new ConflictError('Пользователь с данным email уже существует'));
       }
       next(err);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.findUserbyId = (req, res, next) => {
@@ -45,11 +44,10 @@ module.exports.findUserbyId = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Передан некорректный id');
+        next(new BadRequestError('Передан некорректный id'));
       }
       next(err);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.getUserInfo = (req, res, next) => {
@@ -58,11 +56,10 @@ module.exports.getUserInfo = (req, res, next) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new NotFoundError('Передан некорректный id');
+        next(new NotFoundError('Передан некорректный id'));
       }
       next(err);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.updateUser = (req, res, next) => {
@@ -75,11 +72,10 @@ module.exports.updateUser = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        throw new BadRequestError('Переданы некорректные данные пользователя');
+        next(new BadRequestError('Переданы некорректные данные пользователя'));
       }
       next(err);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.updateAvatar = (req, res, next) => {
@@ -93,14 +89,13 @@ module.exports.updateAvatar = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Передан некорректный id');
+        next(new BadRequestError('Передан некорректный id'));
       }
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('Ошибка. Проверьте правильность введенных данных');
+        next(new BadRequestError('Ошибка. Проверьте правильность введенных данных'));
       }
       next(err);
-    })
-    .catch(next);
+    });
 };
 
 module.exports.login = (req, res, next) => {

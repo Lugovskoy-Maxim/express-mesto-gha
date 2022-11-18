@@ -26,7 +26,7 @@ const allowedCors = [ // список разрешенных адресов
 ];
 // eslint-disable-next-line consistent-return
 app.use((req, res, next) => {
-  const { origin } = req.headers; // Сохраняем источник запроса в переменную origin
+  const { origin } = req.headers.referer; // Сохраняем источник запроса в переменную origin
   // проверяем, что источник запроса есть среди разрешённых
   const { method } = req; // Сохраняем тип запроса (HTTP-метод) в соответствующую переменную
   // Значение для заголовка Access-Control-Allow-Methods по умолчанию (разрешены все типы запросов)

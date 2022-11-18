@@ -10,13 +10,6 @@ const auth = require('./middlewares/auth');
 const { validateLogin, validateRegister } = require('./middlewares/validation');
 const NotFoundError = require('./errors/NotFoundError');
 // 404
-const allowedCors = [ // список разрешенных адресов
-  'https://api.lugo.nomoredomains.icu/*',
-  'http://api.lugo.nomoredomains.icu/*',
-  'https://lugo.nomoredomains.icu/*',
-  'http://lugo.nomoredomains.icu/*',
-  'localhost:3000',
-];
 
 const { PORT = 3000, MANGO_URL = 'mongodb://localhost:27017/mestodb' } = process.env;
 mongoose.connect(MANGO_URL);

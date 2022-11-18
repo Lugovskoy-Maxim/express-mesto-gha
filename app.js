@@ -11,10 +11,10 @@ const { validateLogin, validateRegister } = require('./middlewares/validation');
 const NotFoundError = require('./errors/NotFoundError');
 // 404
 const allowedCors = [ // список разрешенных адресов
-  'https://api.lugo.nomoredomains.icu',
-  'http://api.lugo.nomoredomains.icu',
-  'https://lugo.nomoredomains.icu',
-  'http://lugo.nomoredomains.icu',
+  'https://api.lugo.nomoredomains.icu/*',
+  'http://api.lugo.nomoredomains.icu/*',
+  'https://lugo.nomoredomains.icu/*',
+  'http://lugo.nomoredomains.icu/*',
   'localhost:3000',
 ];
 

@@ -21,6 +21,11 @@ const allowedCors = [ // список разрешенных адресов
 const { PORT = 3000, MANGO_URL = 'mongodb://localhost:27017/mestodb' } = process.env;
 mongoose.connect(MANGO_URL);
 const app = express();
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// eslint-disable-next-line consistent-return
 app.use((req, res, next) => {
   const { origin } = req.headers; // Сохраняем источник запроса в переменную origin
   // проверяем, что источник запроса есть среди разрешённых
@@ -39,11 +44,7 @@ app.use((req, res, next) => {
 
   next();
 });
-app.use(cookieParser());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 // добавить проверку почты на уже созданиые
-
 app.use('/signin', validateLogin, login);
 app.use('/signup', validateRegister, createUser);
 app.get('/signout', (req, res) => {

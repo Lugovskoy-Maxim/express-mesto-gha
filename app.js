@@ -18,10 +18,10 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const allowedCors = [ // список разрешенных адресов
-  'https://api.lugo.nomoredomains.icu/*',
-  'http://api.lugo.nomoredomains.icu/*',
-  'https://lugo.nomoredomains.icu/*',
-  'http://lugo.nomoredomains.icu/*',
+  'https://api.lugo.nomoredomains.icu',
+  'http://api.lugo.nomoredomains.icu',
+  'https://lugo.nomoredomains.icu',
+  'http://lugo.nomoredomains.icu',
   'localhost:3000',
 ];
 // eslint-disable-next-line consistent-return
